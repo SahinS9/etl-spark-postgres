@@ -8,9 +8,9 @@ from .models import Base
 def main() -> None:
     engine = get_engine()
 
-    print("[init_db] creating/verifying tables...")
+    print("[init_db.py] creating/verifying tables...")
     Base.metadata.create_all(engine)
-    print("init_db] Tables created/verified!")
+    print("init_db.py] Tables created/verified!")
 
 if __name__ == "__main__":
     main()

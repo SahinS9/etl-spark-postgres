@@ -1,11 +1,15 @@
 import os
 from typing import Any
 
+from pathlib import Path
+
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
+
+PROJECT_ROOT= Path(__file__).resolve().parent.parent
 
 DATABASE_URL: str | None = os.getenv("DATABASE_URL")
 

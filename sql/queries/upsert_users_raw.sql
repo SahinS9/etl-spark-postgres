@@ -1,0 +1,57 @@
+INSERT INTO users_raw (
+    id,
+    name,
+    username,
+    email,
+    phone,
+    website,
+    address_street,
+    address_suite,
+    address_city,
+    address_zipcode,
+    address_geo_lat,
+    address_geo_lng,
+    company_name,
+    company_catch_phrase,
+    company_bs,
+    ingested_run_id,
+    ingested_at_epoch_ms
+    )
+VALUES
+    (
+    :id,
+    :name,
+    :username,
+    :email,
+    :phone,
+    :website,
+    :address_street,
+    :address_suite,
+    :address_city,
+    :address_zipcode,
+    :address_geo_lat,
+    :address_geo_lng,
+    :company_name,
+    :company_catch_phrase,
+    :company_bs,
+    :ingested_run_id,
+    :ingested_at_epoch_ms
+    )
+ON CONFLICT (id) DO UPDATE
+SET
+    name = EXCLUDED.name,
+    username = EXCLUDED.username,
+    email = EXCLUDED.email,
+    phone = EXCLUDED.phone,
+    website = EXCLUDED.website,
+    address_street = EXCLUDED.address_street,
+    address_suite = EXCLUDED.address_suite,
+    address_city = EXCLUDED.address_city,
+    address_zipcode = EXCLUDED.address_zipcode,
+    address_geo_lat = EXCLUDED.address_geo_lat,
+    address_geo_lng = EXCLUDED.address_geo_lng,
+    company_name = EXCLUDED.company_name,
+    company_catch_phrase = EXCLUDED.company_catch_phrase,
+    company_bs = EXCLUDED.company_bs,
+    ingested_run_id = EXCLUDED.ingested_run_id,
+    ingested_at_epoch_ms = EXCLUDED.ingested_at_epoch_ms;

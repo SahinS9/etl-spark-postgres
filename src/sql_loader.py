@@ -1,9 +1,9 @@
-from pathlib import Path
-_SQL_DIR= Path(__file__).resolve().parent.parent / "sql"
+from .config import PROJECT_ROOT
 
+SQL_DIR_QUERIES = PROJECT_ROOT / "sql" / "queries"
 
 def load_sql(filename: str) -> str:
-    path = _SQL_DIR / filename
+    path = SQL_DIR_QUERIES / filename
     if not path.exists():
         raise FileNotFoundError(f"SQL file not found: {path}")
     return path.read_text(encoding="utf-8")

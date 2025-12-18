@@ -17,7 +17,7 @@ class EtlRunLog(Base):
     __tablename__ = "etl_run_log"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    runid: Mapped[str] = mapped_column(String(64), unique=True, nullable=False) #business identifier - string
+    run_id: Mapped[str] = mapped_column(String(64), unique=True, nullable=False) #business identifier - string
 
     status: Mapped[str] = mapped_column(String(16), nullable=False)
 

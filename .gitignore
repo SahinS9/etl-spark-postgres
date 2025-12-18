@@ -24,3 +24,8 @@ metastore_db/
 .DS_Store
 .vscode/
 .idea/
+
+# ------------------------
+# Personal Notes
+# ------------------------
+notes.txt
