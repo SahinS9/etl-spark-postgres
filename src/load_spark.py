@@ -17,7 +17,7 @@ class JdbcConfig:
     url: str
     props: dict[str, str]
 
-def parse_database_rul_to_jdbc(database_url: str) -> JdbcConfig:
+def parse_database_url_to_jdbc(database_url: str) -> JdbcConfig:
     #Convert SQLAlchemy-style DATABASE_URL into Spark JDBC url + properties. 
 
     parsed = urlparse(database_url)
@@ -34,7 +34,7 @@ def parse_database_rul_to_jdbc(database_url: str) -> JdbcConfig:
     props: dict[str, str] = {
         "user": parsed.username or "",
         "password": parsed.password or "",
-        "drive": "org.postgresql.Drive",
+        "driver": "org.postgresql.Drive",
     }
 
     return JdbcConfig(url=jdbc_url, props=props)
@@ -76,7 +76,7 @@ def run(run_id: str | None = None) -> str:
     spark = get_spark("posts-enriched-etl")
 
     try:
-        jdbc = parse_database_rul_to_jdbc(DATABASE_URL)
+        jdbc = parse_database_url_to_jdbc(DATABASE_URL)
 
         posts_df = read_table(spark, jdbc, "posts_raw")
         users_df = read_table(spark, jdbc, "users_raw")

@@ -58,7 +58,7 @@ def build_posts_enriched_stage(
         "title",
         "body",
         "comment_count",
-        "row_has",
+        "row_hash",
         "load_run_id",
         "load_at_epoch_ms"
     )
