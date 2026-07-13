@@ -1,0 +1,7 @@
+=== ACTUAL SEQUENCE STATE ===
+ schemaname |         sequencename          | last_value | start_value | increment_by 
+------------+-------------------------------+------------+-------------+--------------
+ public     | etl_run_log_id_seq            |         10 |           1 |            1
+ public     | posts_enriched_history_id_seq |          1 |           1 |            1
+(2 rows)
+

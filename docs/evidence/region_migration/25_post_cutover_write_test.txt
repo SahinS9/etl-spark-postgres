@@ -1,0 +1,22 @@
+=== POST-CUTOVER TARGET WRITE TEST ===
+BEGIN
+ id |             run_id             | status  
+----+--------------------------------+---------
+ 11 | post-cutover-target-smoke-test | STARTED
+(1 row)
+
+INSERT 0 1
+DELETE 1
+COMMIT
+=== VERIFY TEST ROW CLEANUP ===
+ remaining_test_rows 
+---------------------
+                   0
+(1 row)
+
+=== VERIFY TARGET SEQUENCE ===
+ last_value | is_called 
+------------+-----------
+         11 | t
+(1 row)
+

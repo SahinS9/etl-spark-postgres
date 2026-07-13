@@ -1,0 +1,71 @@
+=== SOURCE DATABASE IDENTITY ===
+ database_name | connected_user |                                               postgres_version                                               | server_version  | wal_level 
+---------------+----------------+--------------------------------------------------------------------------------------------------------------+-----------------+-----------
+ neondb        | neondb_owner   | PostgreSQL 17.10 (986efc8) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit | 17.10 (986efc8) | replica
+(1 row)
+
+=== DATABASE SIZE  ===
+ database_name | database_size 
+---------------+---------------
+ neondb        | 8304 kB
+(1 row)
+
+=== INSTALLED EXTENSIONS ===
+ extension_name | externsion_version 
+----------------+--------------------
+ plpgsql        | 1.0
+(1 row)
+
+=== APPLICATION TABLES ===
+ schemaname |        tablename        |  tableowner  
+------------+-------------------------+--------------
+ public     | comments_raw            | neondb_owner
+ public     | etl_run_log             | neondb_owner
+ public     | posts_enriched_history  | neondb_owner
+ public     | posts_enriched_snapshot | neondb_owner
+ public     | posts_enriched_stage    | neondb_owner
+ public     | posts_raw               | neondb_owner
+ public     | schema_migrations       | neondb_owner
+ public     | users_raw               | neondb_owner
+(8 rows)
+
+=== TABLE SIZE AND ESTIMATED ROWS ===
+ schemaname |       table_name        | estimated_rows | total_size 
+------------+-------------------------+----------------+------------
+ public     | comments_raw            |            500 | 440 kB
+ public     | etl_run_log             |              9 | 48 kB
+ public     | posts_enriched_history  |              0 | 32 kB
+ public     | posts_enriched_snapshot |              0 | 24 kB
+ public     | posts_enriched_stage    |              0 | 32 kB
+ public     | posts_raw               |            100 | 80 kB
+ public     | schema_migrations       |              8 | 32 kB
+ public     | users_raw               |             10 | 48 kB
+(8 rows)
+
+=== PRIMARY KEYS ===
+ schema_name |       table_name        |      primary_key_name       |      definition       
+-------------+-------------------------+-----------------------------+-----------------------
+ public      | comments_raw            | comments_raw_pkey           | PRIMARY KEY (id)
+ public      | etl_run_log             | etl_run_log_pkey            | PRIMARY KEY (id)
+ public      | posts_enriched_history  | posts_enriched_history_pkey | PRIMARY KEY (id)
+ public      | posts_enriched_snapshot | posts_enriched_pkey         | PRIMARY KEY (post_id)
+ public      | posts_raw               | uq_posts_raw_id             | PRIMARY KEY (id)
+ public      | schema_migrations       | schema_migrations_pkey      | PRIMARY KEY (version)
+ public      | users_raw               | users_raw_pkey              | PRIMARY KEY (id)
+(7 rows)
+
+=== TABLES WITHOUT PRIMARY KEYS ===
+ schema_name |      table_name      
+-------------+----------------------
+ public      | posts_enriched_stage
+(1 row)
+
+=== SEQUENCES ===
+ sequence_schema |         sequence_name         | data_type | start_value | increment 
+-----------------+-------------------------------+-----------+-------------+-----------
+ public          | etl_run_log_id_seq            | integer   | 1           | 1
+ public          | posts_enriched_history_id_seq | bigint    | 1           | 1
+ public          | posts_enriched_post_id_seq    | integer   | 1           | 1
+ public          | posts_raw_id_seq              | integer   | 1           | 1
+(4 rows)
+

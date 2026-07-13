@@ -1,0 +1,5 @@
+etl_run_log_id_seq: source_last=10, source_called=True, source_max=9, target_max=9, setting_target=10, target_called=True
+etl_run_log_id_seq: verification=PASS
+posts_enriched_history_id_seq: source_last=1, source_called=False, source_max=0, target_max=0, setting_target=1, target_called=False
+posts_enriched_history_id_seq: verification=PASS
+SEQUENCE SYNCHRONIZATION: PASS

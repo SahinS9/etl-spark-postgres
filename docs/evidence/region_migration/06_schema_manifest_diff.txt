@@ -1,0 +1,74 @@
+--- docs/evidence/region_migration/04_source_schema_manifest.txt	2026-07-13 18:21:23
++++ docs/evidence/region_migration/05_target_schema_manifest.txt	2026-07-13 18:21:46
+@@ -8,7 +8,7 @@
+  public       | comments_raw            |                5 | body                 | text                     | text        |                          |                   |               | NO          |                                                    | NO          | 
+  public       | comments_raw            |                6 | ingested_run_id      | character varying        | varchar     |                       64 |                   |               | NO          |                                                    | NO          | 
+  public       | comments_raw            |                7 | ingested_at_epoch_ms | bigint                   | int8        |                          |                64 |             0 | NO          |                                                    | NO          | 
+- public       | etl_run_log             |                1 | id                   | integer                  | int4        |                          |                32 |             0 | NO          | nextval('etl_run_log_id_seq'::regclass)            | NO          | 
++ public       | etl_run_log             |                1 | id                   | integer                  | int4        |                          |                32 |             0 | NO          |                                                    | YES         | BY DEFAULT
+  public       | etl_run_log             |                2 | run_id               | character varying        | varchar     |                       64 |                   |               | NO          |                                                    | NO          | 
+  public       | etl_run_log             |                3 | status               | character varying        | varchar     |                       16 |                   |               | NO          |                                                    | NO          | 
+  public       | etl_run_log             |                4 | started_at           | timestamp with time zone | timestamptz |                          |                   |               | NO          | now()                                              | NO          | 
+@@ -26,7 +26,7 @@
+  public       | posts_enriched_history  |               10 | valid_from_run_id    | character varying        | varchar     |                       64 |                   |               | NO          |                                                    | NO          | 
+  public       | posts_enriched_history  |               11 | valid_from_epoch_ms  | bigint                   | int8        |                          |                64 |             0 | NO          |                                                    | NO          | 
+  public       | posts_enriched_history  |               12 | is_current           | boolean                  | bool        |                          |                   |               | NO          | true                                               | NO          | 
+- public       | posts_enriched_snapshot |                1 | post_id              | integer                  | int4        |                          |                32 |             0 | NO          | nextval('posts_enriched_post_id_seq'::regclass)    | NO          | 
++ public       | posts_enriched_snapshot |                1 | post_id              | integer                  | int4        |                          |                32 |             0 | NO          |                                                    | NO          | 
+  public       | posts_enriched_snapshot |                2 | user_id              | integer                  | int4        |                          |                32 |             0 | NO          |                                                    | NO          | 
+  public       | posts_enriched_snapshot |                3 | user_name            | character varying        | varchar     |                      256 |                   |               | NO          |                                                    | NO          | 
+  public       | posts_enriched_snapshot |                4 | user_email           | character varying        | varchar     |                      256 |                   |               | NO          |                                                    | NO          | 
+@@ -46,7 +46,7 @@
+  public       | posts_enriched_stage    |                8 | row_hash             | character varying        | varchar     |                       64 |                   |               | NO          |                                                    | NO          | 
+  public       | posts_enriched_stage    |                9 | load_run_id          | character varying        | varchar     |                       64 |                   |               | NO          |                                                    | NO          | 
+  public       | posts_enriched_stage    |               10 | load_at_epoch_ms     | bigint                   | int8        |                          |                64 |             0 | NO          |                                                    | NO          | 
+- public       | posts_raw               |                1 | id                   | integer                  | int4        |                          |                32 |             0 | NO          | nextval('posts_raw_id_seq'::regclass)              | NO          | 
++ public       | posts_raw               |                1 | id                   | integer                  | int4        |                          |                32 |             0 | NO          |                                                    | NO          | 
+  public       | posts_raw               |                2 | user_id              | integer                  | int4        |                          |                32 |             0 | NO          |                                                    | NO          | 
+  public       | posts_raw               |                3 | title                | character varying        | varchar     |                      512 |                   |               | NO          |                                                    | NO          | 
+  public       | posts_raw               |                4 | body                 | text                     | text        |                          |                   |               | NO          |                                                    | NO          | 
+@@ -72,15 +72,15 @@
+ (68 rows)
+ 
+ === PRIMARY AND UNIQUE CONSTRAINTS ===
+- schema_name |       table_name        | constraint_type |       constraint_name       |      definition       
+--------------+-------------------------+-----------------+-----------------------------+-----------------------
+- public      | comments_raw            | p               | comments_raw_pkey           | PRIMARY KEY (id)
+- public      | etl_run_log             | p               | etl_run_log_pkey            | PRIMARY KEY (id)
+- public      | etl_run_log             | u               | etl_run_log_runid_key       | UNIQUE (run_id)
+- public      | posts_enriched_history  | p               | posts_enriched_history_pkey | PRIMARY KEY (id)
+- public      | posts_enriched_snapshot | p               | posts_enriched_pkey         | PRIMARY KEY (post_id)
+- public      | posts_raw               | p               | uq_posts_raw_id             | PRIMARY KEY (id)
+- public      | users_raw               | p               | users_raw_pkey              | PRIMARY KEY (id)
++ schema_name |       table_name        | constraint_type |       constraint_name        |      definition       
++-------------+-------------------------+-----------------+------------------------------+-----------------------
++ public      | comments_raw            | p               | comments_raw_pkey            | PRIMARY KEY (id)
++ public      | etl_run_log             | p               | etl_run_log_pkey             | PRIMARY KEY (id)
++ public      | etl_run_log             | u               | etl_run_log_run_id_key       | UNIQUE (run_id)
++ public      | posts_enriched_history  | p               | posts_enriched_history_pkey  | PRIMARY KEY (id)
++ public      | posts_enriched_snapshot | p               | posts_enriched_snapshot_pkey | PRIMARY KEY (post_id)
++ public      | posts_raw               | p               | posts_raw_pkey               | PRIMARY KEY (id)
++ public      | users_raw               | p               | users_raw_pkey               | PRIMARY KEY (id)
+ (7 rows)
+ 
+ === INDEXES ===
+@@ -90,16 +90,16 @@
+  public     | comments_raw            | idx_comments_raw_ingested_run_id | CREATE INDEX idx_comments_raw_ingested_run_id ON public.comments_raw USING btree (ingested_run_id)
+  public     | comments_raw            | idx_comments_raw_post_id         | CREATE INDEX idx_comments_raw_post_id ON public.comments_raw USING btree (post_id)
+  public     | etl_run_log             | etl_run_log_pkey                 | CREATE UNIQUE INDEX etl_run_log_pkey ON public.etl_run_log USING btree (id)
+- public     | etl_run_log             | etl_run_log_runid_key            | CREATE UNIQUE INDEX etl_run_log_runid_key ON public.etl_run_log USING btree (run_id)
++ public     | etl_run_log             | etl_run_log_run_id_key           | CREATE UNIQUE INDEX etl_run_log_run_id_key ON public.etl_run_log USING btree (run_id)
+  public     | posts_enriched_history  | posts_enriched_history_pkey      | CREATE UNIQUE INDEX posts_enriched_history_pkey ON public.posts_enriched_history USING btree (id)
+  public     | posts_enriched_history  | uq_peh_post_id_current           | CREATE UNIQUE INDEX uq_peh_post_id_current ON public.posts_enriched_history USING btree (post_id) WHERE (is_current = true)
+  public     | posts_enriched_history  | uq_peh_post_id_hash              | CREATE UNIQUE INDEX uq_peh_post_id_hash ON public.posts_enriched_history USING btree (post_id, row_hash)
+  public     | posts_enriched_snapshot | idx_pes_row_hash                 | CREATE INDEX idx_pes_row_hash ON public.posts_enriched_snapshot USING btree (row_hash)
+- public     | posts_enriched_snapshot | posts_enriched_pkey              | CREATE UNIQUE INDEX posts_enriched_pkey ON public.posts_enriched_snapshot USING btree (post_id)
++ public     | posts_enriched_snapshot | posts_enriched_snapshot_pkey     | CREATE UNIQUE INDEX posts_enriched_snapshot_pkey ON public.posts_enriched_snapshot USING btree (post_id)
+  public     | posts_enriched_stage    | idx_pesg_load_run_id             | CREATE INDEX idx_pesg_load_run_id ON public.posts_enriched_stage USING btree (load_run_id)
+  public     | posts_enriched_stage    | idx_pesg_post_id                 | CREATE INDEX idx_pesg_post_id ON public.posts_enriched_stage USING btree (post_id)
+  public     | posts_enriched_stage    | idx_pesg_row_hash                | CREATE INDEX idx_pesg_row_hash ON public.posts_enriched_stage USING btree (row_hash)
+- public     | posts_raw               | uq_posts_raw_id                  | CREATE UNIQUE INDEX uq_posts_raw_id ON public.posts_raw USING btree (id)
++ public     | posts_raw               | posts_raw_pkey                   | CREATE UNIQUE INDEX posts_raw_pkey ON public.posts_raw USING btree (id)
+  public     | users_raw               | idx_users_raw_ingested_run_id    | CREATE INDEX idx_users_raw_ingested_run_id ON public.users_raw USING btree (ingested_run_id)
+  public     | users_raw               | users_raw_pkey                   | CREATE UNIQUE INDEX users_raw_pkey ON public.users_raw USING btree (id)
+ (16 rows)

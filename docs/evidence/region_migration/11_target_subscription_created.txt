@@ -1,0 +1,8 @@
+=== CREATE TARGET SUBSCRIPTION ===
+CREATE SUBSCRIPTION
+=== SUBSCRIPTION CREATED ===
+         subname          | subenabled |        subslotname        |      subpublications       
+--------------------------+------------+---------------------------+----------------------------
+ etl_region_migration_sub | t          | etl_region_migration_slot | {etl_region_migration_pub}
+(1 row)
+

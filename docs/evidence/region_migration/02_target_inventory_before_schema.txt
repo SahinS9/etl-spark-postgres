@@ -1,0 +1,43 @@
+=== SOURCE DATABASE IDENTITY ===
+ database_name | connected_user |                                                    postgres_version                                                     | server_version | wal_level 
+---------------+----------------+-------------------------------------------------------------------------------------------------------------------------+----------------+-----------
+ neondb        | neondb_owner   | PostgreSQL 18.4 (709c4c3) on aarch64-unknown-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit | 18.4 (709c4c3) | replica
+(1 row)
+
+=== DATABASE SIZE  ===
+ database_name | database_size 
+---------------+---------------
+ neondb        | 7536 kB
+(1 row)
+
+=== INSTALLED EXTENSIONS ===
+ extension_name | externsion_version 
+----------------+--------------------
+ plpgsql        | 1.0
+(1 row)
+
+=== APPLICATION TABLES ===
+ schemaname | tablename | tableowner 
+------------+-----------+------------
+(0 rows)
+
+=== TABLE SIZE AND ESTIMATED ROWS ===
+ schemaname | table_name | estimated_rows | total_size 
+------------+------------+----------------+------------
+(0 rows)
+
+=== PRIMARY KEYS ===
+ schema_name | table_name | primary_key_name | definition 
+-------------+------------+------------------+------------
+(0 rows)
+
+=== TABLES WITHOUT PRIMARY KEYS ===
+ schema_name | table_name 
+-------------+------------
+(0 rows)
+
+=== SEQUENCES ===
+ sequence_schema | sequence_name | data_type | start_value | increment 
+-----------------+---------------+-----------+-------------+-----------
+(0 rows)
+

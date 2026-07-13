@@ -1,0 +1,15 @@
+=== GRANT REPLICATION ROLE ACCESS ===
+GRANT
+GRANT
+GRANT
+=== VERIFY TABLE PRIVILEGES ===
+        grantee         | table_schema |       table_name        | privilege_type 
+------------------------+--------------+-------------------------+----------------
+ etl_region_replication | public       | comments_raw            | SELECT
+ etl_region_replication | public       | etl_run_log             | SELECT
+ etl_region_replication | public       | posts_enriched_history  | SELECT
+ etl_region_replication | public       | posts_enriched_snapshot | SELECT
+ etl_region_replication | public       | posts_raw               | SELECT
+ etl_region_replication | public       | users_raw               | SELECT
+(6 rows)
+

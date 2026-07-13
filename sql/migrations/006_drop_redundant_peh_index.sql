@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS idx_peh_post_id_current;

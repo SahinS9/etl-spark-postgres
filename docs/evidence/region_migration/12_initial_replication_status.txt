@@ -1,0 +1,28 @@
+=== SUBSCRIPTION STATUS ===
+         subname          | pid  | relation | received_lsn | latest_end_lsn |        latest_end_time        
+--------------------------+------+----------+--------------+----------------+-------------------------------
+ etl_region_migration_sub | 1070 |          | 0/20D80F8    | 0/20D80F8      | 2026-07-13 17:15:19.177434+00
+(1 row)
+
+=== TABLE SYNCHRONIZATION STATUS ===
+         subname          |       table_name        | state_code | state_description | srsublsn  
+--------------------------+-------------------------+------------+-------------------+-----------
+ etl_region_migration_sub | users_raw               | r          | READY             | 0/20D5EF8
+ etl_region_migration_sub | comments_raw            | r          | READY             | 0/20D6B28
+ etl_region_migration_sub | posts_enriched_history  | r          | READY             | 0/20D7740
+ etl_region_migration_sub | posts_enriched_snapshot | r          | READY             | 0/20D6BA0
+ etl_region_migration_sub | etl_run_log             | r          | READY             | 0/20D5E80
+ etl_region_migration_sub | posts_raw               | r          | READY             | 0/20D77B8
+(6 rows)
+
+=== TARGET ROW COUNTS ===
+       table_name        | row_count 
+-------------------------+-----------
+ comments_raw            |       500
+ etl_run_log             |         9
+ posts_enriched_history  |         0
+ posts_enriched_snapshot |         0
+ posts_raw               |       100
+ users_raw               |        10
+(6 rows)
+

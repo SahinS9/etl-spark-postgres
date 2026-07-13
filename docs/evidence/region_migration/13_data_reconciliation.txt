@@ -1,0 +1,10 @@
+table                           source  target   count    hash
+------------------------------------------------------------------------
+comments_raw                       500     500    PASS    PASS
+etl_run_log                          9       9    PASS    PASS
+posts_enriched_history               0       0    PASS    PASS
+posts_enriched_snapshot              0       0    PASS    PASS
+posts_raw                          100     100    PASS    PASS
+users_raw                           10      10    PASS    PASS
+------------------------------------------------------------------------
+RECONCILIATION RESULT: PASS

@@ -66,9 +66,9 @@ def main() -> None:
                         "Do NOT edit already-applied migrations. Create a new migration instead."
                     )
 
-            continue
+                continue
         
-        pending.append((version, checksum, sql))
+            pending.append((version, checksum, sql))
 
 
 

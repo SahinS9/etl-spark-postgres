@@ -1,0 +1,7 @@
+=== GENERATED ID SEQUENCES ===
+       table_name       | column_name |            sequence_name             | maximum_table_id 
+------------------------+-------------+--------------------------------------+------------------
+ etl_run_log            | id          | public.etl_run_log_id_seq            |                9
+ posts_enriched_history | id          | public.posts_enriched_history_id_seq |                0
+(2 rows)
+

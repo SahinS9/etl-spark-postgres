@@ -1,0 +1,48 @@
+=== TARGET DATABASE IDENTITY ===
+ database_name | connected_user | server_version 
+---------------+----------------+----------------
+ neondb        | neondb_owner   | 18.4 (709c4c3)
+(1 row)
+
+=== APPLICATION TABLES ===
+        tablename        
+-------------------------
+ comments_raw
+ etl_run_log
+ posts_enriched_history
+ posts_enriched_snapshot
+ posts_enriched_stage
+ posts_raw
+ schema_migrations
+ users_raw
+(8 rows)
+
+=== BUSINESS TABLE COUNTS ===
+       table_name        | row_count 
+-------------------------+-----------
+ comments_raw            |       500
+ etl_run_log             |         9
+ posts_enriched_history  |         0
+ posts_enriched_snapshot |         0
+ posts_enriched_stage    |         0
+ posts_raw               |       100
+ schema_migrations       |        10
+ users_raw               |        10
+(8 rows)
+
+=== FAILED OR INCOMPLETE ETL RUNS ===
+              run_id              | status  |          started_at           | finished_at | message 
+----------------------------------+---------+-------------------------------+-------------+---------
+ dd108e65cd0648dc97039be62819c885 | STARTED | 2025-12-18 21:02:38.692685+00 |             | 
+ 84a96d639aff4dd39c55c46fbb669741 | STARTED | 2025-12-18 21:01:02.03+00     |             | 
+ e73b268eb78d428c977cca6e3698d178 | STARTED | 2025-12-18 16:57:03.720946+00 |             | 
+ 744ef817cdc44e9a9f6704bdfae41cb7 | STARTED | 2025-12-18 14:35:06.950364+00 |             | 
+(4 rows)
+
+=== TARGET SEQUENCE STATE ===
+         sequence_name         | last_value | is_called 
+-------------------------------+------------+-----------
+ etl_run_log_id_seq            |         11 | t
+ posts_enriched_history_id_seq |          1 | f
+(2 rows)
+

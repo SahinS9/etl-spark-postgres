@@ -1,0 +1,19 @@
+=== CREATE REGION MIGRATION PUBLICATION ===
+DO
+=== PUBLICATION DETAILS ===
+         pubname          | pubinsert | pubupdate | pubdelete | pubtruncate 
+--------------------------+-----------+-----------+-----------+-------------
+ etl_region_migration_pub | t         | t         | t         | t
+(1 row)
+
+=== PUBLISHED TABLES ===
+         pubname          | schemaname |        tablename        
+--------------------------+------------+-------------------------
+ etl_region_migration_pub | public     | comments_raw
+ etl_region_migration_pub | public     | etl_run_log
+ etl_region_migration_pub | public     | posts_enriched_history
+ etl_region_migration_pub | public     | posts_enriched_snapshot
+ etl_region_migration_pub | public     | posts_raw
+ etl_region_migration_pub | public     | users_raw
+(6 rows)
+

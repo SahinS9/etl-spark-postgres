@@ -1,0 +1,14 @@
+=== DISABLE SUBSCRIPTION ===
+ALTER SUBSCRIPTION
+         subname          | subenabled |        subslotname        
+--------------------------+------------+---------------------------
+ etl_region_migration_sub | f          | etl_region_migration_slot
+(1 row)
+
+=== DROP SUBSCRIPTION ===
+DROP SUBSCRIPTION
+=== VERIFY SUBSCRIPTION REMOVED ===
+ subname | subenabled | subslotname 
+---------+------------+-------------
+(0 rows)
+

@@ -1,6 +1,5 @@
 import os
 from typing import Any
-
 from pathlib import Path
 
 import requests
@@ -13,27 +12,32 @@ PROJECT_ROOT= Path(__file__).resolve().parent.parent
 
 DATABASE_URL: str | None = os.getenv("DATABASE_URL")
 
-API_BASE_URL: str = os.getenv("API_BASE_URL", "https://jsonplaceholder.typicode.com")
+API_BASE_URL: str | None = os.getenv("API_BASE_URL")
 API_KEY: str | None = os.getenv("API_KEY")  # no key for this API
 
 
 HTTP_TIMEOUT_SECONDS: int = int(os.getenv("HTTP_TIMEOUT_SECONDS", "30"))
 USER_AGENT: str = os.getenv("USER_AGENT", "etl-miniproject/1.0")
 
-# Endpoints 
-POSTS_URL: str = f"{API_BASE_URL}/posts"
-USERS_URL: str = f"{API_BASE_URL}/users"
-COMMENTS_URL: str = f"{API_BASE_URL}/comments"
-
 
 def validate_config() -> None:
+     missing = []
      if not DATABASE_URL:
-          raise RuntimeError("DATABASE_URL is not set in .env")
+          missing.append("DATABASE_URL")
      if not API_BASE_URL:
-          raise RuntimeError("API_BASE_URL is not set in .env")
+          missing.append("API_BASE_URL")
+     if missing:
+          raise RuntimeError(f"Missing required configuration: {','.join(missing)}")
 
 
+def endpoint(path: str) -> list[dict[str, Any]]:
+     headers = {"User-agent": USER_AGENT}
+     if API_KEY:
+          headers["Authorization"] = f"Bearer {API_KEY}"
 
+def posts_url() -> str: return endpoint("posts")
+def users_url() -> str: return endpoint("users")
+def comments_url() -> str: return endpoint("comments")
 
 
 def fetch_json(url: str) -> list[dict[str, Any]]:

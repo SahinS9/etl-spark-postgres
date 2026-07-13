@@ -9,7 +9,7 @@ import uuid
 
 from sqlalchemy.orm import Session
 
-from .config import fetch_json, validate_config, POSTS_URL, USERS_URL, COMMENTS_URL
+from .config import fetch_json, validate_config, posts_url, users_url, comments_url
 from .db import get_engine
 
 from .repository import (
@@ -20,6 +20,7 @@ from .repository import (
     upsert_users_raw,
     upsert_comments_raw
 )
+
 
 
 
@@ -34,20 +35,25 @@ def main() -> None:
     ingested_at_ms=new_epoch_ms()
 
     print(f"[extract.py] run_id={run_id}")
+
+
+    datasets: dict[str, list[dict[str, Any]]] = {}
     
-    print(f"[extract.py] Get {POSTS_URL}")
-    posts = fetch_json(POSTS_URL)
-    print(f"[extract.py] fetched {len(posts)} records")
-
-    print(f"[extract.py] Get {USERS_URL}")
-    users = fetch_json(USERS_URL)
-    print(f"[extract.py] fetched {len(users)} records")
-
-    print(f"[extract.py] Get {COMMENTS_URL}")
-    comments = fetch_json(COMMENTS_URL)
-    print(f"[extract.py] fetched {len(comments)} records")
+    for name, url_fn in [
+        ("posts", posts_url),
+        ("users", users_url),
+        ("comments", comments_url),
+    ]:
+        url = url_fn()
+        print(f"extract.py Get {url}")
+        datasets[name] = fetch_json(url)
+        print(f"[extract.py] fetched {len(datasets[name])} {name} records")
     
 
+    posts = datasets["posts"]
+    users = datasets["users"]
+    comments = datasets["comments"]
+    
     posts_rows = [
         {"id": int(p["id"]),
          "user_id": int(p["userId"]),
