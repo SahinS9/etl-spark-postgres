@@ -16,6 +16,7 @@ from sqlalchemy import (
     ,Text
     ,func
     ,true
+    ,UniqueConstraint
     )
 
 
@@ -149,6 +150,11 @@ posts_enriched_stage = Table(
     ,Column("row_hash", String(64), nullable=False)
     ,Column("load_run_id", String(64), nullable=False)
     ,Column("load_at_epoch_ms", BigInteger, nullable=False)
+    ,UniqueConstraint(
+        "load_run_id"
+        ,"post_id"
+        ,name = "uq_posts_enriched_stage_run_post"
+    )
 )
 
 

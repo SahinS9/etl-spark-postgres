@@ -61,13 +61,15 @@ def build_posts_enriched_stage(
             F.col("c.comment_count"),
             F.lit(0),
         )
+        .cast("int")
+        .alias("comment_count")
     )
     )
 
     hash_input = F.concat_ws(
         "||",
         F.col("post_id").cast("string")
-        ,F.col("user_id").cast("user_id")
+        ,F.col("user_id").cast("string")
         ,F.coalesce(
             F.col("user_name"),
             F.lit("")

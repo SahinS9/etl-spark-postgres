@@ -1,8 +1,7 @@
 import os
-import time
 import uuid
 from dataclasses import dataclass
-from urllib.parse import parse_sql, unquote, urlencode, urlparse
+from urllib.parse import parse_qsl, unquote, urlencode, urlparse
 
 from pyspark.sql import DataFrame, SparkSession
 
@@ -19,7 +18,7 @@ class JdbcConfig:
 
 
 def parse_database_url_to_jdbc(database_url: str) -> JdbcConfig:
-    "modify postgresql connection url into spark jdbc config"
+    """modify postgresql connection url into spark jdbc config"""
 
     parsed = urlparse(database_url)
 
@@ -43,6 +42,11 @@ def parse_database_url_to_jdbc(database_url: str) -> JdbcConfig:
             "Database url must include a username"
         )
     
+    if not parsed.hostname:
+        raise ValueError(
+            "Database URL must include a hostname"
+        )    
+
     if parsed.password is None:
         raise ValueError(
             "Database url must include a password"
@@ -51,7 +55,7 @@ def parse_database_url_to_jdbc(database_url: str) -> JdbcConfig:
     port = parsed.port or 5432
 
     query_parameters = dict(
-        parse_sql(
+        parse_qsl(
             parsed.query
             ,keep_blank_values=True
         )
@@ -65,8 +69,8 @@ def parse_database_url_to_jdbc(database_url: str) -> JdbcConfig:
 
     if query_parameters:
         jdbc_url = (
-            f"{jdbc_url}"
-            ,f"{urlencode(query_parameters)}"
+            f"{jdbc_url}?"
+            f"{urlencode(query_parameters)}"
         )
 
     properties = {
@@ -92,7 +96,7 @@ def read_table(
         .format("jdbc")
         .option("url", jdbc.url)
         .option("dbtable", table_name)
-        .option(**jdbc.properties)
+        .options(**jdbc.properties)
         .load()
     )
 
@@ -117,11 +121,11 @@ def run(run_id: str | None=None) -> str:
     validate_config()
 
     spark_database_url = os.getenv(
-        "SPARK_DATABASE_URL".
+        "SPARK_DATABASE_URL",
         DATABASE_URL or ""
     )
 
-    if not spark_database_url"
+    if not spark_database_url:
         raise RuntimeError(
             "SPARK_DATABASE_URL or DATABASE_URL must be configured"
         )
@@ -135,6 +139,52 @@ def run(run_id: str | None=None) -> str:
 
     try:
         jdbc = parse_database_url_to_jdbc(
-            spark_databse_url
+            spark_database_url
         )
 
+        posts_df = read_table(
+            spark
+            ,jdbc
+            ,"public.posts_raw"
+        )
+
+        users_df = read_table(
+            spark
+            ,jdbc
+            ,"public.users_raw"
+        )
+
+        comments_df = read_table(
+            spark
+            ,jdbc
+            ,"public.comments_raw"
+
+        )
+
+        stage_df = build_posts_enriched_stage(
+            posts_df = posts_df
+            ,users_df = users_df
+            ,comments_df = comments_df
+            ,run_id = effective_run_id
+            ,run_epoch_ms = run_epoch_ms
+        )
+
+        write_table_append(
+            stage_df
+            ,jdbc
+            ,"public.posts_enriched_stage"
+        )
+
+        return effective_run_id
+    
+    finally:
+        spark.stop()
+
+
+if __name__ == "__main__":
+    completed_run_id = run()
+
+    print(
+        "[load_spark.py] stage load complete: "
+        f"run_id={completed_run_id}"
+    )
