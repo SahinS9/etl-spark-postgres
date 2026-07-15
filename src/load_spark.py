@@ -1,100 +1,140 @@
-from __future__ import annotations
-
+import os
 import time
 import uuid
-
 from dataclasses import dataclass
-from urllib.parse import urlparse
+from urllib.parse import parse_sql, unquote, urlencode, urlparse
 
 from pyspark.sql import DataFrame, SparkSession
 
 from .config import DATABASE_URL, validate_config
 from .spark_session import get_spark
+from .transform import build_posts_enriched_stage
+from .utils import current_epoch_ms
 
-
-@dataclass (frozen=True)
+@dataclass(frozen=True)
 class JdbcConfig:
+
     url: str
-    props: dict[str, str]
+    properties: dict[str, str]
+
 
 def parse_database_url_to_jdbc(database_url: str) -> JdbcConfig:
-    #Convert SQLAlchemy-style DATABASE_URL into Spark JDBC url + properties. 
+    "modify postgresql connection url into spark jdbc config"
 
     parsed = urlparse(database_url)
 
-    if parsed.scheme not in {"postgresql", "postgres"}:
-        raise ValueError(f"Unsopperted DB scheme: {parsed.scheme}")
-    
-    if not parsed.hostname or not parsed.path:
-        raise ValueError(f"DATABASE_URL must include hostname and database name")
-    
-    port = parsed.port or 5432
-    jdbc_url = f"jdbc:postgresql://{parsed.hostname}:{port}{parsed.path}"
+    #to accept SQLAlchemy schemes as postgresql+pyscopg
+    database_scheme = parsed.scheme.split("+", maxsplit=1) [0]
 
-    props: dict[str, str] = {
-        "user": parsed.username or "",
-        "password": parsed.password or "",
-        "driver": "org.postgresql.Drive",
+    if database_scheme not in {"postgresql", "postgres"}:
+        raise ValueError(
+            f"unsupported database scheme: {parsed.scheme!r}"
+        )
+    
+    database_name = parsed.path.lstrip("/")
+
+    if not database_name:
+        raise ValueError(
+            "Database url must include a database name"
+        )
+    
+    if not parsed.username:
+        raise ValueError(
+            "Database url must include a username"
+        )
+    
+    if parsed.password is None:
+        raise ValueError(
+            "Database url must include a password"
+        )
+
+    port = parsed.port or 5432
+
+    query_parameters = dict(
+        parse_sql(
+            parsed.query
+            ,keep_blank_values=True
+        )
+    )
+
+    jdbc_url = (
+        f"jdbc:postgresql://"
+        f"{parsed.hostname}:{port}/"
+        f"{database_name}"
+    )
+
+    if query_parameters:
+        jdbc_url = (
+            f"{jdbc_url}"
+            ,f"{urlencode(query_parameters)}"
+        )
+
+    properties = {
+        "user": unquote(parsed.username)
+        ,"password": unquote(parsed.password)
+        ,"driver": "org.postgresql.Driver"
     }
 
-    return JdbcConfig(url=jdbc_url, props=props)
+    return JdbcConfig(
+        url=jdbc_url
+        ,properties=properties
+    )
 
 
-def read_table(spark: SparkSession, jdbc: JdbcConfig, table: str) -> DataFrame:
+def read_table(
+        spark: SparkSession
+        ,jdbc: JdbcConfig
+        ,table_name: str
+) ->DataFrame:
+    "read pstgsql table through spark jdbc"
     return (
-        spark.read.format("jdbc")
+        spark.read
+        .format("jdbc")
         .option("url", jdbc.url)
-        .option("dbtable", table)
-        .option("user", jdbc.props["user"])
-        .option("password", jdbc.props["password"])
-        .option("driver", "org.postgresql.Driver")
+        .option("dbtable", table_name)
+        .option(**jdbc.properties)
         .load()
     )
 
-def write_table_append(df: DataFrame, jdbc: JdbcConfig, table: str) -> None:
-    (
-        df.write.format("jdbc")
-        .mode("append")
-        .option("url", jdbc.url)
-        .option("dbtable", table)
-        .option("user", jdbc.props["user"])
-        .option("password", jdbc.props["password"])
-        .option("driver", "org.postgresql.Driver")
-        .save()
+def write_table_append(
+        dataframe: DataFrame
+        ,jdbc: JdbcConfig
+        ,table_name: str
+) -> None:
+    "append spark df to pstgsql table"
+
+    (dataframe.write
+     .format("jdbc")
+     .mode("append")
+     .option("url", jdbc.url)
+     .option("dbtable", table_name)
+     .options(**jdbc.properties)
+     .save()
+     )
+    
+
+def run(run_id: str | None=None) -> str:
+    validate_config()
+
+    spark_database_url = os.getenv(
+        "SPARK_DATABASE_URL".
+        DATABASE_URL or ""
     )
 
-def run(run_id: str | None = None) -> str:
-    # Spark job entrypoiint
-
-    validate_config()
-    if not DATABASE_URL:
-        raise RuntimeError("DATABASE_URL is not set")
+    if not spark_database_url"
+        raise RuntimeError(
+            "SPARK_DATABASE_URL or DATABASE_URL must be configured"
+        )
     
-    run_id = run_id or uuid.uuid4().hex
-    run_epoch_ms = int(time.time()*1000)
+    effective_run_id = run_id or uuid.uuid4().hex
+    run_epoch_ms = current_epoch_ms()
 
-    spark = get_spark("posts-enriched-etl")
+    spark = get_spark(
+        "etl-project"
+    )
 
     try:
-        jdbc = parse_database_url_to_jdbc(DATABASE_URL)
-
-        posts_df = read_table(spark, jdbc, "posts_raw")
-        users_df = read_table(spark, jdbc, "users_raw")
-        comments_df = read_table(spark, jdbc, "comments_raw")
-
-        from .transform import build_posts_enriched_stage
-
-        stage_df = build_posts_enriched_stage(
-            posts_df=posts_df,
-            users_df=users_df,
-            comments_df=comments_df,
-            run_id=run_id,
-            run_epoch_ms=run_epoch_ms,
+        jdbc = parse_database_url_to_jdbc(
+            spark_databse_url
         )
 
-        write_table_append(stage_df, jdbc, "posts_enriched_stage")
-
-        return run_id
-    
-    finally:
-        spark.stop()

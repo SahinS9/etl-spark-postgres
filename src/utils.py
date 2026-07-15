@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any
+import time
 
 from sqlalchemy import text
 
@@ -21,3 +22,7 @@ def run_sql_file(relative_path: str, params: dict[str, Any] | None = None) -> in
     with engine.begin() as conn:
         result = conn.execute(text(sql), params or {})
         return result.rowcount or 0
+
+
+def current_epoch_ms() -> int:
+    return int(time.time()*1000)

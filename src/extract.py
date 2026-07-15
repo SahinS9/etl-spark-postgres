@@ -6,7 +6,7 @@ No transformations
 
 from __future__ import annotations
 
-import time
+
 import uuid
 
 from sqlalchemy.orm import Session
@@ -14,6 +14,7 @@ from typing import Any
 
 from .config import fetch_json, validate_config, posts_url, users_url, comments_url
 from .db import get_engine
+from .utils import current_epoch_ms
 
 from .repository import (
     log_run_failed,
@@ -27,8 +28,7 @@ from .repository import (
 
 
 
-def current_epoch_ms() -> int:
-    return int(time.time()*1000)
+
 
 def require_keys(
         record: dict[str, Any]
