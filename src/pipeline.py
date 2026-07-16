@@ -75,7 +75,7 @@ def main() -> None:
         )
 
 
-        with Session.engine() as session:
+        with Session(engine) as session:
             with session.begin():
                 snapshot_rows = merge_posts_enriched_snapshot(
                     session

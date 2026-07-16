@@ -9,14 +9,10 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 from typing import Any
 
-from .config import fetch_json, validate_config, posts_url, users_url, comments_url
-from .db import get_engine
+from .config import fetch_json, posts_url, users_url, comments_url
 from .utils import current_epoch_ms
 
 from .repository import (
-    log_run_failed,
-    log_run_started,
-    log_run_success,
     upsert_posts_raw,
     upsert_users_raw,
     upsert_comments_raw
@@ -62,7 +58,7 @@ def fetch_datasets() -> dict[str, list[dict[str, Any]]]:
         datasets[dataset_name] = records
 
         print(
-            f"[extract.py] fetched"
+            f"[extract.py] fetched "
             f"{len(records)} {dataset_name} records"
 
         )
@@ -230,7 +226,7 @@ def extract_and_load_raw(
         ,
 ) -> dict[str,int]:
     
-    "transaction and run-status management"
+    "Fetch, map, and upsert raw API datasets"
 
     timestamp_ms = (
         ingested_at_epoch_ms
@@ -296,61 +292,9 @@ def format_result_message(result: dict[str, int]) -> str:
     )
 
 def main() -> None:
-    validate_config()
-
-    engine = get_engine()
-    run_id = uuid.uuid4().hex
-
-    print(f"[extract.py] run_id={run_id}")
-
-    with Session(engine) as session:
-        log_run_started(session, run_id)
-        session.commit()
-
-    try:
-        with Session(engine) as session:
-            with session.begin():
-                result = extract_and_load_raw(
-                    session=session
-                    ,run_id=run_id
-                )
-
-                result_message = format_result_message(result)
-
-                log_run_success(
-                    session
-                    ,run_id
-                    ,result_message
-                )
-        print(f"[extract.py] SUCCESS: {result_message}")
-
-    except Exception as exc:
-        failure_message = str(exc)#.strip()[:1500]
-
-        if not failure_message:
-            failure_message = type(exc).__name__
-
-        try:
-            with Session(engine) as failure_session:
-                log_run_failed(
-                    failure_session,
-                    run_id,
-                    failure_message,
-                )
-                failure_session.commit()
-
-        except Exception as log_exc:
-            print(
-                "[extract.py] failed to record run failure: "
-                f"{type(log_exc).__name__}: {log_exc}"
-            )
-
-        print(
-            f"[extract.py] FAILED: "
-            f"{type(exc).__name__}: {failure_message}"
-        )
-
-        raise
+    raise RuntimeError(
+        "Run the full ETL with: python -m src.pipeline"
+    )
 
 if __name__ == "__main__":
     main()

@@ -6,7 +6,7 @@ INSERT INTO public.posts_enriched_snapshot(
     ,title
     ,body
     ,comment_count
-    ,row_has
+    ,row_hash
     ,loaded_run_id
     ,loaded_at_epoch_ms
     )

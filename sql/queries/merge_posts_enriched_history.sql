@@ -2,7 +2,7 @@ WITH current_rows_to_close AS (
     UPDATE public.posts_enriched_history AS history
     SET is_current = False
     FROM public.posts_enriched_stage AS stage
-    WHERE stage.load_run_id := run_id
+    WHERE stage.load_run_id = :run_id
         AND history.post_id = stage.post_id
         AND history.is_current = TRUE
         AND history.row_hash IS DISTINCT FROM stage.row_hash
